@@ -46,6 +46,7 @@ namespace NetworkTcpCommunication {
 
                     var childSocketThread = new Thread(() =>
                     {
+                        Console.WriteLine("IP-Address: {0}", client.Client.RemoteEndPoint.ToString());
                         AcceptClientConnection(client);
                     });
 
@@ -67,7 +68,7 @@ namespace NetworkTcpCommunication {
         {
             //loop to receive all the data sent by the client
             Byte[] buffer = new Byte[1024];
-            string data;
+            string data = "";
 
             Console.WriteLine("Waiting for a connection...");
 
@@ -82,15 +83,15 @@ namespace NetworkTcpCommunication {
             {
                 data = System.Text.Encoding.ASCII.GetString(buffer, 0, i);
                 Console.WriteLine("Received: {0}", data);
-
-                data = data.ToUpper();
-
+                string command = data.Replace("\n", "").Replace("\r", "");
+                if (command=="time")
+                {
+                    DateTime time = DateTime.Now;
+                    data = time.ToString();
+                } 
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
-
-                //send back a response
                 stream.Write(msg, 0, msg.Length);
                 Console.WriteLine("Sent: {0}", data);
-
             }
         }
     }
