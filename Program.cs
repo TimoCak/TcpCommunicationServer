@@ -84,15 +84,23 @@ namespace NetworkTcpCommunication {
                 data = System.Text.Encoding.ASCII.GetString(buffer, 0, i);
                 Console.WriteLine("Received: {0}", data);
                 string command = data.Replace("\n", "").Replace("\r", "");
-                if (command=="time")
-                {
-                    DateTime time = DateTime.Now;
-                    data = time.ToString();
-                } 
-                byte[] msg = System.Text.Encoding.ASCII.GetBytes(data);
+               
+                //check and execute commands
+                command = ExecuteCommands(command);
+                 
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(command);
                 stream.Write(msg, 0, msg.Length);
-                Console.WriteLine("Sent: {0}", data);
+                Console.WriteLine("Sent: {0}", command);
             }
+        }
+        public static string ExecuteCommands(string command)
+        {
+            if (command=="time")
+            {
+                DateTime time = DateTime.Now;
+                return time.ToString();
+            }
+            return command;
         }
     }
 }
